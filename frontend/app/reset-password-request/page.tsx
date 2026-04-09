@@ -45,7 +45,7 @@ export default function ResetPasswordRequestPage() {
         const body = await res.json().catch(() => ({}));
         const firstError =
           body?.errors && typeof body.errors === "object"
-            ? Object.values(body.errors)[0]?.[0]
+            ? Object.values(body.errors as Record<string, string[]>)[0]?.[0]
             : null;
         throw new Error(
           firstError ||
