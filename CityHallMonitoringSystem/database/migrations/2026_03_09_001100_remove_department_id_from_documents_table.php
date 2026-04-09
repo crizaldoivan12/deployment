@@ -7,17 +7,30 @@ use Illuminate\Support\Facades\DB;
 
 return new class extends Migration {
 
-   public function up(): void
-{
-    Schema::table('documents', function (Blueprint $table) {
+    public function up(): void
+    {
+        // Drop foreign key first
+        Schema::table('documents', function (Blueprint $table) {
+            if (Schema::hasColumn('documents', 'department_id')) {
+                $table->dropForeign(['department_id']);
+            }
+        });
 
-        // drop foreign key first
-        $table->dropForeign(['department_id']);
+        // Drop all indexes related to department_id (SQLite specific)
+        if (DB::getDriverName() === 'sqlite') {
+            DB::statement('DROP INDEX IF EXISTS documents_department_id_index');
+            DB::statement('DROP INDEX IF EXISTS documents_department_id_status_index');
+            DB::statement('DROP INDEX IF EXISTS documents_department_perf_index');
+        }
 
-        // then drop column
-        $table->dropColumn('department_id');
-    });
-}
+        // Finally drop the column
+        Schema::table('documents', function (Blueprint $table) {
+            if (Schema::hasColumn('documents', 'department_id')) {
+                $table->dropColumn('department_id');
+            }
+        });
+    }
+
     public function down(): void
     {
         if (Schema::hasColumn('documents', 'department_id')) {
@@ -25,7 +38,6 @@ return new class extends Migration {
         }
 
         Schema::table('documents', function (Blueprint $table) {
-
             $table->foreignId('department_id')
                 ->nullable()
                 ->constrained('departments')
@@ -33,6 +45,7 @@ return new class extends Migration {
 
             $table->index('department_id');
             $table->index(['department_id', 'status']);
+            $table->index('department_id', 'documents_department_perf_index');
         });
     }
 };

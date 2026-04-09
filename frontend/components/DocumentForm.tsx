@@ -46,7 +46,7 @@ export type DocumentPayload = {
   name_of_business?: string | null;
   reason?: string | null;
   particular: string;
-  amount: number;
+  amount: number | null;
   routed_department_id: number;
   status: string;
   remarks?: string | null;
@@ -386,7 +386,7 @@ export default function DocumentForm({
         name_of_business: nameOfBusiness || null,
         reason: reason || null,
         particular,
-        amount: Number(amount),
+        amount: amount.trim() ? Number(amount) : null,
         routed_department_id: Number(routedDepartmentId),
         status,
         remarks: remarks || null,

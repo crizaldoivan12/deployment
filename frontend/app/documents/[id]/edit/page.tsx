@@ -98,7 +98,7 @@ export default function EditDocumentPage() {
           name_of_business: docRes.name_of_business ?? "",
           reason: docRes.reason ?? "",
           particular: docRes.particular,
-          amount: docRes.amount !== null && docRes.amount !== undefined ? String(docRes.amount) : "",
+          amount: docRes.amount ?? null,
           routed_department_id: Number(docRes.routed_department_id),
           status: docRes.status === "Pending" ? "For Signature" : docRes.status,
           remarks: docRes.remarks ?? "",
